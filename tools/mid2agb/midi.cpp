@@ -284,11 +284,11 @@ bool ReadSeqEvent(Event& event)
         // text event
         std::string text = ReadEventText();
 
-        if (text == "[")
+        if (text == "[" || text == "(" || text == "loopStart" || text == "loopBegin")
             MakeBlockEvent(event, EventType::LoopBegin);
-        else if (text == "][")
+        else if (text == "][" || text == ")(" || text == "loopEndStart" || text == "loopEndBegin")
             MakeBlockEvent(event, EventType::LoopEndBegin);
-        else if (text == "]")
+        else if (text == "]" || text == ")" || text == "loopEnd")
             MakeBlockEvent(event, EventType::LoopEnd);
         else if (text == ":")
             MakeBlockEvent(event, EventType::Label);

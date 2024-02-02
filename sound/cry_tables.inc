@@ -130,7 +130,11 @@ gCryTable::
 .endif @ P_GALARIAN_FORMS
 .endif @ P_FAMILY_MEOWTH
 .if P_FAMILY_PSYDUCK == TRUE
+.if MEME_MODE == TRUE
+	cry MEME_OP
+.else
 	cry Cry_Psyduck
+.endif
 	cry Cry_Golduck
 .endif @ P_FAMILY_PSYDUCK
 .if P_FAMILY_MANKEY == TRUE
@@ -486,7 +490,11 @@ gCryTable::
 	cry Cry_Noctowl
 .endif @ P_FAMILY_HOOTHOOT
 .if P_FAMILY_LEDYBA == TRUE
+.if MEME_MODE == TRUE
+	cry MEME_MiraculousLadybug
+.else
 	cry Cry_Ledyba
+.endif
 	cry Cry_Ledian
 .endif @ P_FAMILY_LEDYBA
 .if P_FAMILY_SPINARAK == TRUE
@@ -1455,7 +1463,11 @@ gCryTable::
 .endif @ P_FAMILY_KARRABLAST
 .if P_FAMILY_FOONGUS == TRUE
 	cry Cry_Foongus
+.if MEME_MODE == TRUE
+	cry MEME_AMOGUS
+.else
 	cry Cry_Amoonguss
+.endif
 .endif @ P_FAMILY_FOONGUS
 .if P_FAMILY_FRILLISH == TRUE
 	cry Cry_Frillish
@@ -4805,3 +4817,5 @@ gCryTable_Reverse::
 .if P_FAMILY_OGERPON == TRUE
 	cry_reverse Cry_Ogerpon
 .endif @ P_FAMILY_OGERPON
+
+.include "sound/delta_cries.inc"

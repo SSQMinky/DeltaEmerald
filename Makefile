@@ -102,6 +102,7 @@ SONG_SUBDIR = sound/songs
 MID_SUBDIR = sound/songs/midi
 SAMPLE_SUBDIR = sound/direct_sound_samples
 CRY_SUBDIR = sound/direct_sound_samples/cries
+DELTACRY_SUBDIR = sound/delta_samples/cries
 TEST_SUBDIR = test
 
 C_BUILDDIR = $(OBJ_DIR)/$(C_SUBDIR)
@@ -326,6 +327,7 @@ include songs.mk
 
 $(CRY_SUBDIR)/uncomp_%.bin: $(CRY_SUBDIR)/uncomp_%.aif ; $(AIF) $< $@
 $(CRY_SUBDIR)/%.bin: $(CRY_SUBDIR)/%.aif ; $(AIF) $< $@ --compress
+$(DELTACRY_SUBDIR)/%.bin: $(DELTACRY_SUBDIR)/%.aif ; $(AIF) $< $@ --compress
 sound/%.bin: sound/%.aif ; $(AIF) $< $@
 
 

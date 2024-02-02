@@ -279,7 +279,6 @@
 #define END_SE                      SE_SUDOWOODO_SHAKE
 
 // Music
-#define START_MUS                   350
 #define MUS_LITTLEROOT_TEST         350 // MUS_TETSUJI          // Unused, likely a test track.
 #define MUS_GSC_ROUTE38             351 // MUS_FIELD13          // Unused, likely a test track.
 #define MUS_CAUGHT                  352 // MUS_KACHI22
@@ -490,59 +489,122 @@
 #define MUS_RG_TRAINER_TOWER        556 // MUS_RG_T_TOWER
 #define MUS_RG_SLOW_PALLET          557 // MUS_RG_SLOWMASARA
 #define MUS_RG_TEACHY_TV_MENU       558 // MUS_RG_TVNOIZE
-#define END_MUS                     MUS_RG_TEACHY_TV_MENU
 
-#define PH_TRAP_BLEND               559
-#define PH_TRAP_HELD                560
-#define PH_TRAP_SOLO                561
-#define PH_FACE_BLEND               562
-#define PH_FACE_HELD                563
-#define PH_FACE_SOLO                564
-#define PH_CLOTH_BLEND              565
-#define PH_CLOTH_HELD               566
-#define PH_CLOTH_SOLO               567
-#define PH_DRESS_BLEND              568
-#define PH_DRESS_HELD               569
-#define PH_DRESS_SOLO               570
-#define PH_FLEECE_BLEND             571
-#define PH_FLEECE_HELD              572
-#define PH_FLEECE_SOLO              573
-#define PH_KIT_BLEND                574
-#define PH_KIT_HELD                 575
-#define PH_KIT_SOLO                 576
-#define PH_PRICE_BLEND              577
-#define PH_PRICE_HELD               578
-#define PH_PRICE_SOLO               579
-#define PH_LOT_BLEND                580
-#define PH_LOT_HELD                 581
-#define PH_LOT_SOLO                 582
-#define PH_GOAT_BLEND               583
-#define PH_GOAT_HELD                584
-#define PH_GOAT_SOLO                585
-#define PH_THOUGHT_BLEND            586
-#define PH_THOUGHT_HELD             587
-#define PH_THOUGHT_SOLO             588
-#define PH_CHOICE_BLEND             589
-#define PH_CHOICE_HELD              590
-#define PH_CHOICE_SOLO              591
-#define PH_MOUTH_BLEND              592
-#define PH_MOUTH_HELD               593
-#define PH_MOUTH_SOLO               594
-#define PH_FOOT_BLEND               595
-#define PH_FOOT_HELD                596
-#define PH_FOOT_SOLO                597
-#define PH_GOOSE_BLEND              598
-#define PH_GOOSE_HELD               599
-#define PH_GOOSE_SOLO               600
-#define PH_STRUT_BLEND              601
-#define PH_STRUT_HELD               602
-#define PH_STRUT_SOLO               603
-#define PH_CURE_BLEND               604
-#define PH_CURE_HELD                605
-#define PH_CURE_SOLO                606
-#define PH_NURSE_BLEND              607
-#define PH_NURSE_HELD               608
-#define PH_NURSE_SOLO               609
+// ORAS Music
+#define ORAS_SOARING_DAY            559
+#define MUS_WALLY                   561
+#define MUS_DEX_RATING_1            562
+// Dummies
+#define ORAS_SOARING_NIGHT          ORAS_SOARING_DAY
+#define MUS_DEX_RATING_2            0
+#define MUS_DEX_RATING_3            0
+#define MUS_DEX_RATING_4            0
+#define MUS_DEX_RATING_5            0
+#define MUS_DEX_RATING_6            0
+#define MUS_DEX_RATING_7            0
+#define MUS_DEX_RATING_8            0
+#define MUS_OBTAIN_EGG              0
+#define MUS_PATHTOWALK              0
+#define MUS_HOLDTIGHT               0
+#define MUS_OBTAIN_MEGA             0
+#define MUS_ENCOUNTER_REDBLUE       0
+#define MUS_REDBLUE_ORB             0
+#define MUS_SLITHERERS              0
+#define MUS_HIDEOUT                 0
+#define MUS_FIVESTRIKES             0
+#define MUS_COUNTDESTRUCTION        0
+#define MUS_ENCOUNTER_SCUBA         0
+#define MUS_AQUA_APPEAR             0
+#define MUS_AWAKEN                  0
+#define MUS_EONFLUTE                0
+#define MUS_VS_WALLY                0
+#define MUS_LETS_GO_HOME            0
+#define MUS_HEIRS                   0
+#define MUS_AZOTH                   0
+#define MUS_FALLINGSTARS            0
+#define MUS_VS_ZINNIA               0
+#define MUS_AD_ASTRA_APPLESAUCE     0
+#define MUS_NEW_BEGIN               0
+#define MUS_LISIA                   0
+#define MUS_LISIA_CONTEST_TIME      0
+#define MUS_CONTEST_INTRO           0
+#define MUS_CONTEST_APPEALS         0
+#define MUS_CONTEST_VICTOR          0
+#define MUS_CONTEST_RANK            0
+#define MUS_OBTAIN_DECO             0
+#define MUS_TEAMRANK_INCREASE       0
+#define MUS_ENCOUNTER_POKEFAN       0
+#define MUS_ENCOUNTER_THUG          0
+#define MUS_POKELINK                0
+#define MUS_TIMETRAVEL              0
+#define MUS_BATTLE_RESORT           0
+#define MUS_BATTLE_MAISON           0
+#define MUS_OBTAIN_BP               0
+#define MUS_VS_CHATELAINE           0
+#define MUS_COEXIST                 0
+#define MUS_ENCOUNTER_LEADER        MUS_ENCOUNTER_MAGMA
+#define MUS_ENCOUNTER_FITNESS       MUS_ENCOUNTER_MALE // fitness
+#define MUS_VS_REVERSION            MUS_VS_KYOGRE_GROUDON
+#define MUS_SUPER_SECRET_BASE       MUS_FORTREE
+#define MUS_SEA_MAUVILLE            MUS_ABANDONED_SHIP
+
+// Music Metadata
+#define START_MUS                   MUS_LITTLEROOT_TEST
+#define END_MUS                     MUS_DEX_RATING_1
+
+// Mauville Bard Phonemes
+
+#define PH_TRAP_BLEND               815
+#define PH_TRAP_HELD                816
+#define PH_TRAP_SOLO                817
+#define PH_FACE_BLEND               818
+#define PH_FACE_HELD                819
+#define PH_FACE_SOLO                820
+#define PH_CLOTH_BLEND              821
+#define PH_CLOTH_HELD               822
+#define PH_CLOTH_SOLO               823
+#define PH_DRESS_BLEND              824
+#define PH_DRESS_HELD               825
+#define PH_DRESS_SOLO               826
+#define PH_FLEECE_BLEND             827
+#define PH_FLEECE_HELD              828
+#define PH_FLEECE_SOLO              829
+#define PH_KIT_BLEND                830
+#define PH_KIT_HELD                 831
+#define PH_KIT_SOLO                 832
+#define PH_PRICE_BLEND              833
+#define PH_PRICE_HELD               834
+#define PH_PRICE_SOLO               835
+#define PH_LOT_BLEND                836
+#define PH_LOT_HELD                 837
+#define PH_LOT_SOLO                 838
+#define PH_GOAT_BLEND               839
+#define PH_GOAT_HELD                840
+#define PH_GOAT_SOLO                841
+#define PH_THOUGHT_BLEND            842
+#define PH_THOUGHT_HELD             843
+#define PH_THOUGHT_SOLO             844
+#define PH_CHOICE_BLEND             845
+#define PH_CHOICE_HELD              846
+#define PH_CHOICE_SOLO              847
+#define PH_MOUTH_BLEND              848
+#define PH_MOUTH_HELD               849
+#define PH_MOUTH_SOLO               850
+#define PH_FOOT_BLEND               851
+#define PH_FOOT_HELD                852
+#define PH_FOOT_SOLO                853
+#define PH_GOOSE_BLEND              854
+#define PH_GOOSE_HELD               855
+#define PH_GOOSE_SOLO               856
+#define PH_STRUT_BLEND              857
+#define PH_STRUT_HELD               858
+#define PH_STRUT_SOLO               859
+#define PH_CURE_BLEND               860
+#define PH_CURE_HELD                861
+#define PH_CURE_SOLO                862
+#define PH_NURSE_BLEND              863
+#define PH_NURSE_HELD               864
+#define PH_NURSE_SOLO               865
 
 #define MUS_ROUTE118                0x7FFF  // Map is split into 2 music sections. controlled by GetCurrLocationDefaultMusic().
 

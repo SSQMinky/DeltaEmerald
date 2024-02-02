@@ -368,6 +368,8 @@ void PlayCry_Script(u16 species, u8 mode)
 void PlayCryInternal(u16 species, s8 pan, s8 volume, u8 priority, u8 mode)
 {
     bool32 reverse;
+    // bool32 encounter;
+    // bool32 faint;
     u32 release;
     u32 length;
     u32 pitch;

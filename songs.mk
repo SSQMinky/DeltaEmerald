@@ -120,6 +120,9 @@ $(MID_SUBDIR)/mus_underwater.s: %.s: %.mid
 $(MID_SUBDIR)/mus_intro.s: %.s: %.mid
 	$(MID) $< $@ -E -R$(STD_REVERB) -G060 -V090
 
+$(MID_SUBDIR)/mus_intro_extended.s: %.s: %.mid
+	$(MID) $< $@ -E -R$(STD_REVERB) -G060 -V090
+
 $(MID_SUBDIR)/mus_hall_of_fame.s: %.s: %.mid
 	$(MID) $< $@ -E -R$(STD_REVERB) -G082 -V078
 
@@ -632,6 +635,15 @@ $(MID_SUBDIR)/mus_vs_rayquaza.s: %.s: %.mid
 
 $(MID_SUBDIR)/mus_encounter_hiker.s: %.s: %.mid
 	$(MID) $< $@ -E -R$(STD_REVERB) -G097 -V076
+
+$(MID_SUBDIR)/dseq_soaring_day.s: %.s: %.mid
+	$(MID) $< $@ -E -R$(STD_REVERB) -G260 -V080
+
+$(MID_SUBDIR)/dseq_wally.s: %.s: %.mid
+	$(MID) $< $@ -E -R$(STD_REVERB) -G272 -V080
+
+$(MID_SUBDIR)/dseq_dex_eval_1.s: %.s: %.mid
+	$(MID) $< $@ -E -R$(STD_REVERB) -G273 -V080 -P5
 
 $(MID_SUBDIR)/ph_choice_blend.s: %.s: %.mid
 	$(MID) $< $@ -E -G130 -P4

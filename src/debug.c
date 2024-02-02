@@ -215,6 +215,7 @@ enum SoundMenu
 {
     DEBUG_SOUND_MENU_ITEM_SE,
     DEBUG_SOUND_MENU_ITEM_MUS,
+    DEBUG_SOUND_MENU_ITEM_ALBUM,
 };
 
 // *******************************
@@ -408,6 +409,8 @@ static void DebugAction_Sound_SE(u8 taskId);
 static void DebugAction_Sound_SE_SelectId(u8 taskId);
 static void DebugAction_Sound_MUS(u8 taskId);
 static void DebugAction_Sound_MUS_SelectId(u8 taskId);
+static void DebugAction_Sound_ALBUM(u8 taskId);
+static void DebugAction_Sound_ALBUM_SelectId(u8 taskId);
 
 
 extern const u8 Debug_FlagsNotSetOverworldConfigMessage[];
@@ -591,6 +594,8 @@ static const u8 sDebugText_Sound_SFX[] =                _("SFX…{CLEAR_TO 110}{
 static const u8 sDebugText_Sound_SFX_ID[] =   	        _("SFX Id: {STR_VAR_3}   {START_BUTTON} Stop\n{STR_VAR_1}    \n{STR_VAR_2}");
 static const u8 sDebugText_Sound_Music[] =              _("Music…{CLEAR_TO 110}{RIGHT_ARROW}");
 static const u8 sDebugText_Sound_Music_ID[] =           _("Music Id: {STR_VAR_3}   {START_BUTTON} Stop\n{STR_VAR_1}    \n{STR_VAR_2}");
+static const u8 sDebugText_Sound_Album[] =              _("Album Tracks…{CLEAR_TO 110}{RIGHT_ARROW}");
+static const u8 sDebugText_Sound_Album_ID[] =           _("Track No: {STR_VAR_3}   {START_BUTTON} Stop\n{STR_VAR_1}    \n{STR_VAR_2}");
 
 static const u8 sDebugText_Digit_1[] =        _("{LEFT_ARROW}+1{RIGHT_ARROW}        ");
 static const u8 sDebugText_Digit_10[] =       _("{LEFT_ARROW}+10{RIGHT_ARROW}       ");
@@ -773,8 +778,9 @@ static const struct ListMenuItem sDebugMenu_Items_Fill[] =
 
 static const struct ListMenuItem sDebugMenu_Items_Sound[] =
 {
-    [DEBUG_SOUND_MENU_ITEM_SE]  = {sDebugText_Sound_SFX,  DEBUG_SOUND_MENU_ITEM_SE},
-    [DEBUG_SOUND_MENU_ITEM_MUS] = {sDebugText_Sound_Music, DEBUG_SOUND_MENU_ITEM_MUS},
+    [DEBUG_SOUND_MENU_ITEM_SE]    = {sDebugText_Sound_SFX,  DEBUG_SOUND_MENU_ITEM_SE},
+    [DEBUG_SOUND_MENU_ITEM_MUS]   = {sDebugText_Sound_Music, DEBUG_SOUND_MENU_ITEM_MUS},
+    [DEBUG_SOUND_MENU_ITEM_ALBUM] = {sDebugText_Sound_Album, DEBUG_SOUND_MENU_ITEM_ALBUM},
 };
 
 // *******************************
@@ -877,8 +883,9 @@ static void (*const sDebugMenu_Actions_Fill[])(u8) =
 
 static void (*const sDebugMenu_Actions_Sound[])(u8) =
 {
-    [DEBUG_SOUND_MENU_ITEM_SE]  = DebugAction_Sound_SE,
-    [DEBUG_SOUND_MENU_ITEM_MUS] = DebugAction_Sound_MUS,
+    [DEBUG_SOUND_MENU_ITEM_SE]    = DebugAction_Sound_SE,
+    [DEBUG_SOUND_MENU_ITEM_MUS]   = DebugAction_Sound_MUS,
+    [DEBUG_SOUND_MENU_ITEM_ALBUM] = DebugAction_Sound_ALBUM,
 };
 
 // *******************************
@@ -3886,7 +3893,9 @@ static void DebugAction_Fill_PocketKeyItems(u8 taskId)
 // *******************************
 // Actions Sound
 static const u8 *const sBGMNames[];
+static const u8 *const gBGMAlbumNames[];
 static const u8 *const sSENames[];
+static const int AlbumIndex[];
 
 #define tCurrentSong  data[5]
 
@@ -4054,6 +4063,88 @@ static void DebugAction_Sound_MUS_SelectId(u8 taskId)
     }
 }
 
+static void DebugAction_Sound_ALBUM(u8 taskId)
+{
+    u8 windowId;
+
+    ClearStdWindowAndFrame(gTasks[taskId].tWindowId, TRUE);
+    RemoveWindow(gTasks[taskId].tWindowId);
+
+    HideMapNamePopUpWindow();
+    LoadMessageBoxAndBorderGfx();
+    windowId = AddWindow(&sDebugMenuWindowTemplateSound);
+    DrawStdWindowFrame(windowId, FALSE);
+
+    CopyWindowToVram(windowId, COPYWIN_FULL);
+
+    // Display initial song
+    StringCopy(gStringVar2, gText_DigitIndicator[0]);
+    ConvertIntToDecimalStringN(gStringVar3, 1, STR_CONV_MODE_LEADING_ZEROS, DEBUG_NUMBER_DIGITS_ITEMS);
+    StringCopyPadded(gStringVar1, gBGMAlbumNames[0], CHAR_SPACE, 35);
+    StringExpandPlaceholders(gStringVar4, sDebugText_Sound_Album_ID);
+    AddTextPrinterParameterized(windowId, DEBUG_MENU_FONT, gStringVar4, 1, 1, 0, NULL);
+
+    StopMapMusic(); //Stop map music to better hear new music
+
+    gTasks[taskId].func = DebugAction_Sound_ALBUM_SelectId;
+    gTasks[taskId].tSubWindowId = windowId;
+    gTasks[taskId].tInput = 0;
+    gTasks[taskId].tDigit = 0;
+    gTasks[taskId].tCurrentSong = gTasks[taskId].tInput;
+}
+
+static void DebugAction_Sound_ALBUM_SelectId(u8 taskId)
+{
+    if (JOY_NEW(DPAD_ANY))
+    {
+        if (JOY_NEW(DPAD_UP))
+        {
+            gTasks[taskId].tInput += sPowersOfTen[gTasks[taskId].tDigit];
+            if (gTasks[taskId].tInput > 153)
+                gTasks[taskId].tInput = 153;
+        }
+        if (JOY_NEW(DPAD_DOWN))
+        {
+            gTasks[taskId].tInput -= sPowersOfTen[gTasks[taskId].tDigit];
+            if (gTasks[taskId].tInput < 0)
+                gTasks[taskId].tInput = 0;
+        }
+        if (JOY_NEW(DPAD_LEFT))
+        {
+            if (gTasks[taskId].tDigit > 0)
+                gTasks[taskId].tDigit -= 1;
+        }
+        if (JOY_NEW(DPAD_RIGHT))
+        {
+            if (gTasks[taskId].tDigit < DEBUG_NUMBER_DIGITS_ITEMS - 1)
+                gTasks[taskId].tDigit += 1;
+        }
+
+        StringCopy(gStringVar2, gText_DigitIndicator[gTasks[taskId].tDigit]);
+        StringCopyPadded(gStringVar1, gBGMAlbumNames[gTasks[taskId].tInput], CHAR_SPACE, 35);
+        ConvertIntToDecimalStringN(gStringVar3, gTasks[taskId].tInput+1, STR_CONV_MODE_LEADING_ZEROS, DEBUG_NUMBER_DIGITS_ITEMS);
+        StringExpandPlaceholders(gStringVar4, sDebugText_Sound_Album_ID);
+        AddTextPrinterParameterized(gTasks[taskId].tSubWindowId, DEBUG_MENU_FONT, gStringVar4, 1, 1, 0, NULL);
+    }
+
+    if (JOY_NEW(A_BUTTON))
+    {
+        m4aSongNumStop(AlbumIndex[gTasks[taskId].tCurrentSong]);
+        gTasks[taskId].tCurrentSong = gTasks[taskId].tInput;
+        m4aSongNumStart(AlbumIndex[gTasks[taskId].tInput]);
+    }
+    else if (JOY_NEW(B_BUTTON))
+    {
+        PlaySE(SE_SELECT);
+        // m4aSongNumStop(gTasks[taskId].tCurrentSong);   //Uncomment if music should stop after leaving menu
+        DebugAction_DestroyExtraWindow(taskId);
+    }
+    else if (JOY_NEW(START_BUTTON))
+    {
+        m4aSongNumStop(AlbumIndex[gTasks[taskId].tCurrentSong]);
+    }
+}
+
 #undef tCurrentSong
 
 #undef tMenuTaskId
@@ -4122,7 +4213,7 @@ static void DebugAction_Sound_MUS_SelectId(u8 taskId)
     X(MUS_MT_CHIMNEY) \
     X(MUS_ENCOUNTER_FEMALE) \
     X(MUS_LILYCOVE) \
-    X(MUS_ROUTE111) \
+    X(MUS_DESERT) \
     X(MUS_HELP) \
     X(MUS_UNDERWATER) \
     X(MUS_VICTORY_TRAINER) \
@@ -4272,57 +4363,61 @@ static void DebugAction_Sound_MUS_SelectId(u8 taskId)
     X(MUS_RG_TRAINER_TOWER) \
     X(MUS_RG_SLOW_PALLET) \
     X(MUS_RG_TEACHY_TV_MENU) \
-    X(PH_TRAP_BLEND) \
-    X(PH_TRAP_HELD) \
-    X(PH_TRAP_SOLO) \
-    X(PH_FACE_BLEND) \
-    X(PH_FACE_HELD) \
-    X(PH_FACE_SOLO) \
-    X(PH_CLOTH_BLEND) \
-    X(PH_CLOTH_HELD) \
-    X(PH_CLOTH_SOLO) \
-    X(PH_DRESS_BLEND) \
-    X(PH_DRESS_HELD) \
-    X(PH_DRESS_SOLO) \
-    X(PH_FLEECE_BLEND) \
-    X(PH_FLEECE_HELD) \
-    X(PH_FLEECE_SOLO) \
-    X(PH_KIT_BLEND) \
-    X(PH_KIT_HELD) \
-    X(PH_KIT_SOLO) \
-    X(PH_PRICE_BLEND) \
-    X(PH_PRICE_HELD) \
-    X(PH_PRICE_SOLO) \
-    X(PH_LOT_BLEND) \
-    X(PH_LOT_HELD) \
-    X(PH_LOT_SOLO) \
-    X(PH_GOAT_BLEND) \
-    X(PH_GOAT_HELD) \
-    X(PH_GOAT_SOLO) \
-    X(PH_THOUGHT_BLEND) \
-    X(PH_THOUGHT_HELD) \
-    X(PH_THOUGHT_SOLO) \
-    X(PH_CHOICE_BLEND) \
-    X(PH_CHOICE_HELD) \
-    X(PH_CHOICE_SOLO) \
-    X(PH_MOUTH_BLEND) \
-    X(PH_MOUTH_HELD) \
-    X(PH_MOUTH_SOLO) \
-    X(PH_FOOT_BLEND) \
-    X(PH_FOOT_HELD) \
-    X(PH_FOOT_SOLO) \
-    X(PH_GOOSE_BLEND) \
-    X(PH_GOOSE_HELD) \
-    X(PH_GOOSE_SOLO) \
-    X(PH_STRUT_BLEND) \
-    X(PH_STRUT_HELD) \
-    X(PH_STRUT_SOLO) \
-    X(PH_CURE_BLEND) \
-    X(PH_CURE_HELD) \
-    X(PH_CURE_SOLO) \
-    X(PH_NURSE_BLEND) \
-    X(PH_NURSE_HELD) \
-    X(PH_NURSE_SOLO) \
+    X(ORAS_SOARING_DAY) \
+    X(ORAS_SOARING_NIGHT) \
+    X(MUS_WALLY) \
+    X(MUS_DEX_RATING_1) \
+    X(MUS_DEX_RATING_2) \
+    X(MUS_DEX_RATING_3) \
+    X(MUS_DEX_RATING_4) \
+    X(MUS_DEX_RATING_5) \
+    X(MUS_DEX_RATING_6) \
+    X(MUS_DEX_RATING_7) \
+    X(MUS_DEX_RATING_8) \
+    X(XMUS_OBTAIN_EGG) \
+    X(XMUS_PATHTOWALK) \
+    X(XMUS_HOLDTIGHT) \
+    X(XMUS_OBTAIN_MEGA) \
+    X(XMUS_ENCOUNTER_REDBLUE) \
+    X(XMUS_REDBLUE_ORB) \
+    X(XMUS_SLITHERERS) \
+    X(XMUS_HIDEOUT) \
+    X(XMUS_FIVESTRIKES) \
+    X(XMUS_COUNTDESTRUCTION) \
+    X(XMUS_ENCOUNTER_SCUBA) \
+    X(XMUS_AQUA_APPEAR) \
+    X(XMUS_AWAKEN) \
+    X(XMUS_EONFLUTE) \
+    X(XMUS_VS_WALLY) \
+    X(XMUS_LETS_GO_HOME) \
+    X(XMUS_HEIRS) \
+    X(XMUS_AZOTH) \
+    X(XMUS_FALLINGSTARS) \
+    X(XMUS_VS_ZINNIA) \
+    X(XMUS_AD_ASTRA_APPLESAUCE) \
+    X(XMUS_NEW_BEGIN) \
+    X(XMUS_LISIA) \
+    X(XMUS_LISIA_CONTEST_TIME) \
+    X(XMUS_CONTEST_INTRO) \
+    X(XMUS_CONTEST_APPEALS) \
+    X(XMUS_CONTEST_VICTOR) \
+    X(XMUS_CONTEST_RANK) \
+    X(XMUS_OBTAIN_DECO) \
+    X(XMUS_TEAMRANK_INCREASE) \
+    X(XMUS_ENCOUNTER_POKEFAN) \
+    X(XMUS_ENCOUNTER_THUG) \
+    X(XMUS_POKELINK) \
+    X(XMUS_TIMETRAVEL) \
+    X(XMUS_BATTLE_RESORT) \
+    X(XMUS_BATTLE_MAISON) \
+    X(XMUS_OBTAIN_BP) \
+    X(XMUS_VS_CHATELAINE) \
+    X(XMUS_COEXIST) \
+    X(XMUS_ENCOUNTER_LEADER) \
+    X(XMUS_ENCOUNTER_FITNESS) \
+    X(XMUS_VS_REVERSION) \
+    X(XMUS_SUPER_SECRET_BASE) \
+    X(XMUS_SEA_MAUVILLE) \
 
 #define SOUND_LIST_SE \
     X(SE_USE_ITEM) \
@@ -4616,6 +4711,181 @@ SOUND_LIST_SE
 static const u8 *const sSENames[] =
 {
 SOUND_LIST_SE
+};
+#undef X
+
+#define ALBUM_TRACKLIST \
+    X(MUS_INTRO, "Opening Movie") \
+    X(MUS_INTRO_BATTLE, "Opening Movie 2") \
+    X(MUS_TITLE, "Title Screen: Main Theme") \
+    X(MUS_ROUTE122, "Introductions") \
+    X(MUS_LITTLEROOT, "Littleroot Town") \
+    X(MUS_BIRCH_LAB, "Birch Pokémon Lab") \
+    X(MUS_ENCOUNTER_MAY, "May") \
+    X(MUS_HELP, "H-Help Me!") \
+    X(MUS_VS_WILD, "Battle! (Wild Pokémon)") \
+    X(MUS_VICTORY_WILD, "Victory! (Wild Pokémon)") \
+    X(MUS_ROUTE101, "Route 101") \
+    X(MUS_OLDALE, "Oldale Town") \
+    X(MUS_OBTAIN_ITEM, "Obtained an Item!") \
+    X(MUS_FOLLOW_ME, "Hurry Along") \
+    X(MUS_POKE_CENTER, "Pokémon Center") \
+    X(MUS_HEAL, "Pokémon Healed") \
+    X(MUS_ENCOUNTER_MALE, "Encounter (Youngster)") \
+    X(MUS_DEX_RATING_1, "Pokédex Evaluation 1") \
+    X(MUS_ENCOUNTER_FEMALE, "Encounter (Lass)") \
+    X(MUS_VS_TRAINER, "Battle! (Trainer Battle)") \
+    X(MUS_VICTORY_TRAINER, "Victory! (Trainer Battle)") \
+    X(MUS_LEVEL_UP, "Level Up!") \
+    X(MUS_PETALBURG, "Petalburg City") \
+    X(MUS_DEX_RATING_2, "Pokédex Evaluation 2") \
+    X(MUS_WALLY, "Wally's Theme") \
+    X(MUS_ROUTE104, "Route 104") \
+    X(MUS_PETALBURG_WOODS, "Petalburg Woods") \
+    X(MUS_ENCOUNTER_MAGMA, "Team Magma Appears!") \
+    X(MUS_VS_AQUA_MAGMA, "Battle! (Team Aqua/Magma)") \
+    X(MUS_VICTORY_AQUA_MAGMA, "Victory! (Team Aqua/Magma)") \
+    X(MUS_RUSTBORO, "Rustboro City") \
+    X(MUS_SCHOOL, "Trainers' School") \
+    X(MUS_RG_OBTAIN_KEY_ITEM, "Obtained a Key Item!") \
+    X(MUS_SAILING, "Crossing the Sea") \
+    X(MUS_DEWFORD, "Dewford Town") \
+    X(MUS_ENCOUNTER_GIRL, "Encounter (Tuber♀)") \
+    X(MUS_DEX_RATING_3, "Pokédex Evaluation 3") \
+    X(MUS_SLATEPORT, "Slateport City") \
+    X(MUS_OCEANIC_MUSEUM, "Oceanic Museum") \
+    X(MUS_ENCOUNTER_LEADER, "Leader Theme (Aqua/Magma)") \
+    X(MUS_ROUTE110, "Route 110") \
+    X(MUS_CYCLING, "Cycling") \
+    X(MUS_ENCOUNTER_FITNESS, "Encounter (Triathlete)") \
+    X(MUS_VERDANTURF, "Verdanturf Town") \
+    X(MUS_OBTAIN_EGG, "Received a Pokémon Egg!") \
+    X(MUS_ROUTE113, "Route 113") \
+    X(MUS_ENCOUNTER_TWINS, "Encounter (Twins)") \
+    X(MUS_FALLARBOR, "Fallarbor Town") \
+    X(MUS_CABLE_CAR, "Cable Car") \
+    X(MUS_MT_CHIMNEY, "Mt. Chimney") \
+    X(MUS_ENCOUNTER_HIKER, "Encounter (Hiker)") \
+    X(MUS_DESERT, "Route 111") \
+    X(MUS_DEX_RATING_4, "Pokédex Evaluation 4") \
+    X(MUS_GYM, "Pokémon Gym") \
+    X(MUS_VS_GYM_LEADER, "Battle! (Gym Leader)") \
+    X(MUS_VICTORY_GYM_LEADER, "Victory! (Gym Leader)") \
+    X(MUS_OBTAIN_BADGE, "Obtained a Badge!") \
+    X(MUS_OBTAIN_TMHM, "Obtained a TM!") \
+    X(MUS_PATHTOWALK, "A Path We All Must Walk") \
+    X(MUS_SURF, "Surf") \
+    X(MUS_HOLDTIGHT, "Hold on Tight!") \
+    X(MUS_ABANDONED_SHIP, "Southern Island") \
+    X(MUS_OBTAIN_MEGA, "Obtained a Mega Stone!") \
+    X(MUS_ROUTE119, "Route 119") \
+    X(MUS_ENCOUNTER_REDBLUE, "Explosive Encounters!") \
+    X(MUS_FORTREE, "Fortree City") \
+    X(MUS_ROUTE120, "Route 120") \
+    X(MUS_ENCOUNTER_INTERVIEWER, "Interviewers") \
+    X(MUS_SAFARI_ZONE, "Safari Zone") \
+    X(MUS_DEX_RATING_5, "Pokédex Evaluation 5") \
+    X(MUS_ENCOUNTER_RICH, "Encounter (Gentleman)") \
+    X(MUS_LILYCOVE, "Lilycove City") \
+    X(MUS_LILYCOVE_MUSEUM, "Museum") \
+    X(MUS_MOVE_DELETED, "Move Deleted") \
+    X(MUS_ENCOUNTER_BRENDAN, "Brendan") \
+    X(MUS_VS_RIVAL, "Battle! (Brendan / May)") \
+    X(MUS_EVOLUTION_INTRO, "Evolution Intro") \
+    X(MUS_EVOLUTION, "Evolution") \
+    X(MUS_EVOLVED, "Congratulations!") \
+    X(MUS_POKE_MART, "Poké Mart") \
+    X(MUS_DEX_RATING_6, "Pokédex Evaluation 6") \
+    X(MUS_MT_PYRE, "Mt. Pyre") \
+    X(MUS_ENCOUNTER_INTENSE, "Encounter (Psychic)") \
+    X(MUS_ENCOUNTER_SUSPICIOUS, "Encounter (Hex Maniac)") \
+    X(MUS_MT_PYRE_EXTERIOR, "Mt. Pyre Exterior") \
+    X(MUS_REDBLUE_ORB, "Red Orb / Blue Orb") \
+    X(MUS_SLITHERERS, "The Slitherers") \
+    X(MUS_HIDEOUT, "Hideout") \
+    X(MUS_FIVESTRIKES, "Five Furious Strikes!") \
+    X(MUS_COUNTDESTRUCTION, "Countdown to Destruction") \
+    X(MUS_UNDERWATER, "Dive") \
+    X(MUS_ENCOUNTER_SCUBA, "Encounter (Scuba Diver)") \
+    X(MUS_AQUA_APPEAR, "Team Aqua Appears!") \
+    X(MUS_VS_AQUA_MAGMA_LEADER, "Battle! (Aqua/Magma Leader)") \
+    X(MUS_AWAKEN, "Super-Ancient Pokémon Awaken") \
+    X(MUS_WEATHER_GROUDON, "Drought") \
+    X(MUS_ABNORMAL_WEATHER, "Heavy Rain") \
+    X(MUS_SOOTOPOLIS, "Sootopolis City") \
+    X(MUS_CAVE_OF_ORIGIN, "Cave of Origin") \
+    X(MUS_VS_REVERSION, "Battle! (Primal Reversion)") \
+    X(MUS_COEXIST, "Coexistence") \
+    X(MUS_EONFLUTE, "The Eon Flute") \
+    X(ORAS_SOARING_DAY, "Soaring Dreams") \
+    X(ORAS_SOARING_NIGHT, "Soaring Illusions") \
+    X(MUS_ENCOUNTER_SWIMMER, "Encounter (Swimmer♀)") \
+    X(MUS_EVER_GRANDE, "Ever Grande City") \
+    X(MUS_VICTORY_ROAD, "Victory Road") \
+    X(MUS_ENCOUNTER_COOL, "Encounter (Ace Trainer)") \
+    X(MUS_VS_WALLY, "Rival's Theme") \
+    X(MUS_ENCOUNTER_ELITE_FOUR, "The Elite Four Appear!") \
+    X(MUS_VS_ELITE_FOUR, "Battle! (Elite Four)") \
+    X(MUS_ENCOUNTER_CHAMPION, "Champion Steven") \
+    X(MUS_VS_CHAMPION, "Battle! (Steven)") \
+    X(MUS_VICTORY_LEAGUE, "Victory! (Steven)") \
+    X(MUS_HALL_OF_FAME_ROOM, "Room of Glory") \
+    X(MUS_HALL_OF_FAME, "The Hall of Fame") \
+    X(MUS_LETS_GO_HOME, "Let's Go Home") \
+    X(MUS_CREDITS, "Ending Theme") \
+    X(MUS_END, "The End") \
+    X(MUS_HEIRS, "The Heirs to Eternity") \
+    X(MUS_AZOTH, "Azoth") \
+    X(MUS_RAYQUAZA_APPEARS, "Sky Pillar") \
+    X(MUS_FALLINGSTARS, "The Lament of Falling Stars") \
+    X(MUS_VS_KYOGRE_GROUDON, "Battle! (Legendary Pokémon)") \
+    X(MUS_VS_ZINNIA, "Battle! (Lorekeeper Zinnia)") \
+    X(MUS_AD_ASTRA_APPLESAUCE, "Per Aspera Ad Astra") \
+    X(MUS_RG_VS_DEOXYS, "Battle! (Deoxys)") \
+    X(MUS_NEW_BEGIN, "Strains of a New Beginning") \
+    X(MUS_DEX_RATING_7, "Pokédex Evaluation 7") \
+    X(MUS_OBTAIN_BERRY, "Obtained a Berry!") \
+    X(MUS_CONTEST_LOBBY, "Contest Lobby") \
+    X(MUS_LISIA, "Lisia's Theme") \
+    X(MUS_LISIA_CONTEST_TIME, "Contest Costume Time!") \
+    X(MUS_CONTEST_INTRO, "Pokémon Contest Introduction") \
+    X(MUS_CONTEST_APPEALS, "Pokémon Contest Appeals!") \
+    X(MUS_CONTEST_RESULTS, "Results") \
+    X(MUS_CONTEST_VICTOR, "Contest Victor") \
+    X(MUS_CONTEST_RANK, "Reached a New Contest Rank!") \
+    X(MUS_TRICK_HOUSE, "Trick House") \
+    X(MUS_SUPER_SECRET_BASE, "Super-Secret Bases") \
+    X(MUS_OBTAIN_DECO, "Obtained Decorations!") \
+    X(MUS_TEAMRANK_INCREASE, "Team Rank Increased!") \
+    X(MUS_ENCOUNTER_POKEFAN, "Encounter (Poké Fan)") \
+    X(MUS_ENCOUNTER_THUG, "Encounter (Street Thug)") \
+    X(MUS_SEA_MAUVILLE, "Sea Mauville") \
+    X(MUS_SEALED_CHAMBER, "Sealed Chamber") \
+    X(MUS_VS_REGI, "Battle! (Regi)") \
+    X(MUS_POKELINK, "Pokémon Link") \
+    X(MUS_TIMETRAVEL, "Time Travel Award") \
+    X(MUS_DEX_RATING_8, "Pokédex Evaluation 8") \
+    X(MUS_BATTLE_RESORT, "Battle Resort") \
+    X(MUS_BATTLE_MAISON, "Battle Maison") \
+    X(MUS_OBTAIN_BP, "Obtained BP!") \
+    X(MUS_VS_CHATELAINE, "Battle! (Chatelaine)") \
+
+// Create BGM list (Album order)
+#define X(songId, name) static const u8 sBGMAlbumName_##songId[] = _(name);
+ALBUM_TRACKLIST
+#undef X
+
+#define X(songId, name) sBGMAlbumName_##songId,
+static const u8 *const gBGMAlbumNames[] =
+{
+ALBUM_TRACKLIST
+};
+#undef X
+
+#define X(songId, name) songId,
+static const int AlbumIndex[154] =
+{
+ALBUM_TRACKLIST
 };
 #undef X
 
