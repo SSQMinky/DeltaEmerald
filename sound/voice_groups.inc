@@ -191,9 +191,9 @@
 .include "sound/voicegroups/voicegroup189.inc"
 .include "sound/voicegroups/voicegroup190.inc"
 
-.include "sound/voicegroups/voicegroup256_vswildpoke.inc"
+.include "sound/voicegroups/voicegroup256_vsteamrmx1.inc"
 .include "sound/voicegroups/voicegroup257_vswildpokekit.inc"
-.include "sound/voicegroups/voicegroup258_vstrainer.inc"
+.include "sound/voicegroups/voicegroup258_vsteamrmx2.inc"
 .include "sound/voicegroups/voicegroup259_gen6_se_kit.inc"
 .include "sound/voicegroups/voicegroup260_title_orchestra.inc"
 .include "sound/voicegroups/voicegroup261_orchestral_kit.inc"

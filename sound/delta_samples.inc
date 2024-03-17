@@ -460,3 +460,61 @@ DeltaMus_stylusrmx_79bl_rim::
 DeltaMus_stylusrmx_79bl_snare::
 	.incbin "sound/delta_samples/stylus_loops/79bossaluv/snare.bin"
 
+@ ----- 135 Iron Boy ---- @
+
+	.align 2
+DeltaMus_stylusrmx_135ib_fb01::
+	.incbin "sound/delta_samples/stylus_loops/135ironboy/fuzzbreak_01.bin"
+
+	.align 2
+DeltaMus_stylusrmx_135ib_fb02::
+	.incbin "sound/delta_samples/stylus_loops/135ironboy/fuzzbreak_02.bin"
+
+	.align 2
+DeltaMus_stylusrmx_135ib_fb03::
+	.incbin "sound/delta_samples/stylus_loops/135ironboy/fuzzbreak_03.bin"
+
+	.align 2
+DeltaMus_stylusrmx_135ib_fb04::
+	.incbin "sound/delta_samples/stylus_loops/135ironboy/fuzzbreak_04.bin"
+
+	.align 2
+DeltaMus_stylusrmx_135ib_fb05::
+	.incbin "sound/delta_samples/stylus_loops/135ironboy/fuzzbreak_05.bin"
+
+	.align 2
+DeltaMus_stylusrmx_135ib_fb06::
+	.incbin "sound/delta_samples/stylus_loops/135ironboy/fuzzbreak_06.bin"
+
+	.align 2
+DeltaMus_stylusrmx_135ib_fb07::
+	.incbin "sound/delta_samples/stylus_loops/135ironboy/fuzzbreak_07.bin"
+
+	.align 2
+DeltaMus_stylusrmx_135ib_fb08::
+	.incbin "sound/delta_samples/stylus_loops/135ironboy/fuzzbreak_08.bin"
+
+	.align 2
+DeltaMus_stylusrmx_135ib_fb09::
+	.incbin "sound/delta_samples/stylus_loops/135ironboy/fuzzbreak_09.bin"
+
+	.align 2
+DeltaMus_stylusrmx_135ib_fb10::
+	.incbin "sound/delta_samples/stylus_loops/135ironboy/fuzzbreak_10.bin"
+
+	.align 2
+DeltaMus_stylusrmx_135ib_fb11::
+	.incbin "sound/delta_samples/stylus_loops/135ironboy/fuzzbreak_11.bin"
+
+	.align 2
+DeltaMus_stylusrmx_135ib_hat_closed::
+	.incbin "sound/delta_samples/stylus_loops/135ironboy/hat_closed.bin"
+
+	.align 2
+DeltaMus_stylusrmx_135ib_hat_open::
+	.incbin "sound/delta_samples/stylus_loops/135ironboy/hat_open.bin"
+
+	.align 2
+DeltaMus_stylusrmx_135ib_metal_snare::
+	.incbin "sound/delta_samples/stylus_loops/135ironboy/metalsnare.bin"
+
